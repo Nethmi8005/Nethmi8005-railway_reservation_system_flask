@@ -1,0 +1,434 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #7209B7, #4CC9F0);
+    position: relative;
+    overflow-y: auto;  /* Adds scrollbar when content overflows */
+    padding: 20px;
+}
+
+/* Video Background */
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.video-background::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Adjust opacity for better readability */
+    z-index: 0;
+}
+
+/* Container Styling */
+.container {
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+    margin: 20px auto;
+    padding: 40px 20px;
+}
+.container1 {
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 25px; /* Reduced padding */
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    width: 90%; /* Reduced width */
+    max-width: 500px; /* Decreased max-width */
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+    margin: 15px auto; /* Slightly reduced margin */
+    padding: 35px 15px; /* Adjusted padding */
+}
+
+/* Header Styling */
+h1 {
+    color: #F72585;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    align-self: flex-start;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+button {
+    padding: 12px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    width: 95%;
+}
+
+/* Input Fields */
+input[type="text"], 
+input[type="email"], 
+input[type="password"] {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: 0.3s;
+}
+
+input[type="text"]:focus, 
+input[type="email"]:focus, 
+input[type="password"]:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Buttons */
+button {
+    background-color: #4361EE;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #4895EF;
+    transform: scale(1.03);
+}
+
+/* Secondary Button */
+button.secondary {
+    background-color: #F72585;
+}
+
+button.secondary:hover {
+    background-color: #D61C4E;
+}
+
+/* Remember Me Checkbox */
+input[type="checkbox"] {
+    margin-right: 5px;
+    }
+
+div.remember-me {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 20px;
+}
+
+.button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    text-decoration: none;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.primary-button {
+    background-color: #4361EE;
+}
+
+.primary-button:hover {
+    background-color: #4895EF;
+    transform: scale(1.03);
+}
+
+.secondary-button {
+    background-color: #8793ff;
+}
+
+.secondary-button:hover {
+    background-color: #eb0000;
+    transform: scale(1.03);
+}
+
+/* Logout Button */
+.logout-button {
+    color: #000;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.2); /* Red color for logout */}
+
+.logout-button:hover {
+    color: white;
+    background-color: #eb0000;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    color: #fff;
+}
+
+table, th, td {
+    border: 1px solid #fff;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #4CC9F0;
+    font-weight: bold;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Links */
+.links {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.links a {
+    color: #4CC9F0;
+    text-decoration: none;
+    margin: 0 5px;
+    transition: color 0.3s;
+}
+
+.links a:hover {
+    text-decoration: underline;
+    color: #F72585;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tab-link {
+    background-color: #4CC9F0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tab-link:hover {
+    background-color: #4895EF;
+}
+
+.tab-link.active {
+    background-color: #4361EE;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Train Count Styling */
+.train-count {
+    margin-top: 20px;
+    background-color: rgba(0, 255, 0, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+
+/* Pagination Buttons */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    margin: 0 5px;
+    background-color: #4CC9F0;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: #4895EF;
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+input, select {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px;
+    background-color: #4CC9F0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #4895EF;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    input[type="text"], 
+    input[type="email"], 
+    input[type="password"], 
+    button {
+        font-size: 0.9em;
+        padding: 10px;
+    }
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
