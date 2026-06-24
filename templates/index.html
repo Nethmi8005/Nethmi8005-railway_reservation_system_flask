@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Online Railway Reservation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <video class="video-background" autoplay loop muted>
+        <source src="{{ url_for('static', filename='videos/train.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="container1">
+        <h1>Welcome to the Railway Reservation System</h1>
+        <p>Fast, secure, and easy railway ticket bookings.</p>
+        <div class="button-group">
+            <a class="button primary-button" href="{{ url_for('login') }}">Login</a>
+            <a class="button primary-button" href="{{ url_for('register') }}">Register</a>
+        </div>
+        <footer>
+            &copy; 2024 Online Railway Reservation System. All Rights Reserved. Developed by Group X.
+        </footer>
+    </div>
+
+</body>
+</html>

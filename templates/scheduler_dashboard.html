@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduler Dashboard - Online Railway Reservation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+    
+            // Hide all tab contents
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+    
+            // Remove "active" class from all tab links
+            tablinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+    
+            // Show the selected tab content and add "active" class to the button
+            document.getElementById(tabName).style.display = "block";
+            if (evt) {
+                evt.currentTarget.classList.add("active");
+            }
+    
+            // Store the active tab in sessionStorage
+            sessionStorage.setItem("activeTab", tabName);
+        }
+    
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Ensure "AddTrain" is default when visiting for the first time
+            let activeTab = sessionStorage.getItem("activeTab") || "AddTrain"; 
+    
+            // If a search was performed, override default to "ManageSchedules"
+            if (urlParams.has("search_schedule")) {
+                activeTab = "ManageSchedules";
+            }
+    
+            // Open the correct tab
+            openTab(null, activeTab);
+    
+            // Set the corresponding tab button as active
+            let tabLinks = document.getElementsByClassName("tab-link");
+            for (let i = 0; i < tabLinks.length; i++) {
+                if (tabLinks[i].getAttribute("onclick").includes(activeTab)) {
+                    tabLinks[i].classList.add("active");
+                }
+            }
+        };
+    </script>
+    
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome, {{ session['username'] }}!</h1>
+        <a class="button logout-button" href="{{ url_for('logout') }}">Logout</a>
+
+        <div class="tabs">
+            <button class="tab-link" onclick="openTab(event, 'AddTrain')">Add Train</button>
+            <button class="tab-link" onclick="openTab(event, 'AddStation')">Add Station</button>
+            <button class="tab-link" onclick="openTab(event, 'ScheduleTrain')">Schedule Train</button>
+            <button class="tab-link" onclick="openTab(event, 'ManageSchedules')">Manage Schedules</button>
+        </div>
+
+        <div id="AddTrain" class="tab-content">
+            <h2>Add Train</h2>
+            <form method="POST" action="{{ url_for('add_train') }}">
+                <label for="train_number">Train Number:</label>
+                <input type="text" name="train_number" id="train_number" placeholder="Enter train number" required>
+
+                <label for="train_name">Train Name:</label>
+                <input type="text" name="train_name" id="train_name" placeholder="Enter train name" required>
+
+                <label for="capacity">Capacity:</label>
+                <input type="number" name="capacity" id="capacity" placeholder="Enter capacity" required min="0">
+
+                <label for="classes">Classes:</label><br>
+                <input type="checkbox" name="classes" value="First Class"> First Class
+                <input type="checkbox" name="classes" value="Second Class"> Second Class
+                <input type="checkbox" name="classes" value="Third Class"> Third Class<br>
+
+                <button type="submit" class="button primary-button">Add Train</button>
+            </form>
+            <h2>Available Trains</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Train Number</th>
+                        <th>Train Name</th>
+                        <th>Capacity</th>
+                        <th>Classes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for train in trains %}
+                    <tr>
+                        <td>{{ train.train_number }}</td>
+                        <td>{{ train.train_name }}</td>
+                        <td>{{ train.capacity }}</td>
+                        <td>{{ train.classes }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <form id="pagination-form" method="GET" action="{{ url_for('scheduler_dashboard') }}">
+                    <input type="hidden" name="page" value="{{ current_page }}">
+                    {% if previous_page %}
+                    <button type="button" class="button primary-button" data-page="{{ previous_page }}" onclick="goToPage(this.getAttribute('data-page'))">Previous</button>
+                    {% endif %}
+                    {% if next_page %}
+                    <button type="button" class="button primary-button" data-page="{{ next_page }}" onclick="goToPage(this.getAttribute('data-page'))">Next</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <div id="AddStation" class="tab-content">
+            <h2>Add Station</h2>
+            <form method="POST" action="{{ url_for('add_station') }}">
+                <label for="station_code">Station Code:</label>
+                <input type="text" name="station_code" id="station_code" placeholder="Enter station code" required>
+
+                <label for="station_name">Station Name:</label>
+                <input type="text" name="station_name" id="station_name" placeholder="Enter station name" required>
+
+                <button type="submit" class="button primary-button">Add Station</button>
+            </form>
+            <h2>Existing Stations</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Station Code</th>
+                        <th>Station Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for station in stations %}
+                    <tr>
+                        <td>{{ station.station_code }}</td>
+                        <td>{{ station.station_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <form id="pagination-form" method="GET" action="{{ url_for('scheduler_dashboard') }}">
+                    <input type="hidden" name="page" value="{{ current_page }}">
+                    {% if previous_page %}
+                    <button type="button" class="button primary-button" data-page="{{ previous_page }}" onclick="goToPage(this.getAttribute('data-page'))">Previous</button>
+                    {% endif %}
+                    {% if next_page %}
+                    <button type="button" class="button primary-button" data-page="{{ next_page }}" onclick="goToPage(this.getAttribute('data-page'))">Next</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <div id="ScheduleTrain" class="tab-content">
+            <h2>Schedule Train</h2>
+            <form method="POST" action="{{ url_for('schedule_train') }}">
+                <label for="train_id">Select Train:</label>
+                <select name="train_id" id="train_id" required>
+                    {% for train in all_trains %}
+                    <option value="{{ train.train_id }}">{{ train.train_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="departure_station_id">Departure Station:</label>
+                <select name="departure_station_id" id="departure_station_id" required>
+                    {% for station in all_stations %}
+                    <option value="{{ station.station_id }}">{{ station.station_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="arrival_station_id">Arrival Station:</label>
+                <select name="arrival_station_id" id="arrival_station_id" required>
+                    {% for station in all_stations %}
+                    <option value="{{ station.station_id }}">{{ station.station_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="departure_time">Departure Time:</label>
+                <input type="datetime-local" name="departure_time" id="departure_time" required>
+
+                <label for="arrival_time">Arrival Time:</label>
+                <input type="datetime-local" name="arrival_time" id="arrival_time" required>
+
+                <button type="submit" class="button primary-button">Schedule Train</button>
+            </form>
+        </div>
+
+        <div id="ManageSchedules" class="tab-content">
+            <h2>Manage Schedules</h2>
+            <form method="GET" action="{{ url_for('manage_schedules') }}">
+                <label for="search_schedule">Search by Train or Station Name:</label>
+                <input type="text" name="search_schedule" id="search_schedule" placeholder="Enter train or station name">
+                <button type="submit" class="button primary-button">Search</button>
+            </form>
+            <h2>Existing Schedules</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Train Name</th>
+                        <th>Departure Station</th>
+                        <th>Arrival Station</th>
+                        <th>Departure Time</th>
+                        <th>Arrival Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for schedule in schedules %}
+                    <tr>
+                        <td>{{ schedule.train_name }}</td>
+                        <td>{{ schedule.departure_station }}</td>
+                        <td>{{ schedule.arrival_station }}</td>
+                        <td>{{ schedule.departure_time }}</td>
+                        <td>{{ schedule.arrival_time }}</td>
+                        <td>
+                            <!-- Delete button, triggers the delete route -->
+                            <form method="POST" action="{{ url_for('delete_schedule', schedule_id=schedule.schedule_id) }}" style="display:inline;">
+                                <button type="submit" class="button delete-button" onclick="return confirm('Are you sure you want to delete this schedule?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <form id="pagination-form" method="GET" action="{{ url_for('manage_schedules') }}">
+                    <input type="hidden" name="page" value="{{ current_page_schedules }}">
+                    {% if previous_page_schedules %}
+                    <button type="button" class="button primary-button" data-page="{{ previous_page_schedules }}" onclick="goToPage(this.getAttribute('data-page'))">Previous</button>
+                    {% endif %}
+                    {% if next_page_schedules %}
+                    <button type="button" class="button primary-button" data-page="{{ next_page_schedules }}" onclick="goToPage(this.getAttribute('data-page'))">Next</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

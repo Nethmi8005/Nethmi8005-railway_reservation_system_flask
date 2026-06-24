@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter Officer Dashboard - Online Railway Reservation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function confirmCancelBooking(button) {
+            const bookingId = button.getAttribute('data-booking-id');
+            if (confirm("Are you sure you want to cancel this booking?")) {
+                window.location.href = button.getAttribute('data-url');
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome, {{ session['username'] }}!</h1>
+        <a class="button logout-button" href="{{ url_for('logout') }}">Logout</a>
+
+        <h2>Search Bookings</h2>
+        <form method="GET" action="{{ url_for('counter_dashboard') }}">
+            <label for="search_booking_id">Search by Booking ID:</label>
+            <input type="text" name="search_booking_id" id="search_booking_id" placeholder="Enter booking ID">
+            <button type="submit" class="button primary-button">Search</button>
+        </form>
+
+        <h2>Booking Details</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Train Name</th>
+                    <th>Arrival Station</th>
+                    <th>Arrival Time</th>
+                    <th>Departure Station</th>
+                    <th>Departure Time</th>
+                    <th>Class</th>
+                    <th>Seat Number</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.booking_id }}</td>
+                    <td>{{ booking.train_name }}</td>
+                    <td>{{ booking.arrival_station }}</td>
+                    <td>{{ booking.arrival_time }}</td>
+                    <td>{{ booking.departure_station }}</td>
+                    <td>{{ booking.departure_time }}</td>
+                    <td>{{ booking.class }}</td>
+                    <td>{{ booking.seat_number }}</td>
+                    <td>
+                        <button type="button" class="button secondary-button" data-booking-id="{{ booking.booking_id }}" data-url="{{ url_for('cancel_booking', booking_id=booking.booking_id) }}" onclick="confirmCancelBooking(this)">Cancel</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html>

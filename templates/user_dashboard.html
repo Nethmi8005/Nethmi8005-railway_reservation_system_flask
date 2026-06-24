@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Online Railway Reservation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+    
+            // Hide all tab contents
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+    
+            // Remove "active" class from all tab links
+            tablinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+    
+            // Show the selected tab content and add "active" class to the button
+            document.getElementById(tabName).style.display = "block";
+            if (evt) {
+                evt.currentTarget.classList.add("active");
+            }
+    
+            // Store the active tab in sessionStorage
+            sessionStorage.setItem("activeTab", tabName);
+        }
+    
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            let activeTab = sessionStorage.getItem("activeTab") || "Home"; // Default to "Home"
+    
+            // If search parameters exist, open "SearchTrains"
+            if (urlParams.has("departure_station") || urlParams.has("arrival_station") || urlParams.has("date")) {
+                activeTab = "SearchTrains";
+            }
+    
+            // Ensure tab content is displayed correctly
+            openTab(null, activeTab);
+    
+            // Set the corresponding tab button as active
+            let tabLinks = document.getElementsByClassName("tab-link");
+            for (let i = 0; i < tabLinks.length; i++) {
+                if (tabLinks[i].innerText.replace(/\s/g, '') === activeTab) {
+                    tabLinks[i].classList.add("active");
+                }
+            }
+        };
+    </script>
+    
+    <script>
+        function openBookingModal(button) {
+            var scheduleId = button.getAttribute('data-schedule-id');
+            document.getElementById('schedule_id').value = scheduleId;
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome, {{ session['username'] }}!</h1>
+        <a class="button logout-button" href="{{ url_for('logout') }}">Logout</a>
+
+        <div class="tabs">
+            <button class="tab-link" onclick="openTab(event, 'Home')">Home</button>
+            <button class="tab-link" onclick="openTab(event, 'SearchTrains')">Search Trains</button>
+            <button class="tab-link" onclick="openTab(event, 'MyTickets')">My Tickets</button>
+        </div>
+
+        <div id="Home" class="tab-content">
+            <h2>Welcome to the Railway Reservation System</h2>
+            <p>We are here to make your journey smooth and easy.</p>
+            <div class="train-count">
+                <h3>We currently have {{ train_count }} trains available.</h3>
+            </div>
+        </div>
+
+        <div id="SearchTrains" class="tab-content">
+            <h2>Search Train Schedules</h2>
+            <form method="GET" action="{{ url_for('user_dashboard') }}">
+                <label for="departure_station">Departure Station:</label>
+                <select name="departure_station" id="departure_station">
+                    {% for station in stations %}
+                    <option value="{{ station.station_id }}">{{ station.station_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="arrival_station">Arrival Station:</label>
+                <select name="arrival_station" id="arrival_station">
+                    {% for station in stations %}
+                    <option value="{{ station.station_id }}">{{ station.station_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="date">Date:</label>
+                <input type="date" name="date" id="date" required>
+
+                <button type="submit" class="button primary-button">Search</button>
+            </form>
+
+            <h2>Available Train Schedules</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Train Number</th>
+                        <th>Train Name</th>
+                        <th>Departure Station</th>
+                        <th>Arrival Station</th>
+                        <th>Departure Time</th>
+                        <th>Arrival Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for schedule in schedules %}
+                    <tr>
+                        <td>{{ schedule.train_number }}</td>
+                        <td>{{ schedule.train_name }}</td>
+                        <td>{{ schedule.departure_station }}</td>
+                        <td>{{ schedule.arrival_station }}</td>
+                        <td>{{ schedule.departure_time }}</td>
+                        <td>{{ schedule.arrival_time }}</td>
+                        <td>
+                            <button
+                                type="button"
+                                class="button primary-button"
+                                data-schedule-id="{{ schedule.schedule_id }}"
+                                onclick="openBookingModal(this)"
+                            >
+                                Book
+                            </button>
+                        </td>
+                                            </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <form id="pagination-form" method="GET" action="{{ url_for('user_dashboard') }}">
+                    <input type="hidden" name="page" value="{{ current_page }}">
+                    <input type="hidden" name="departure_station" value="{{ request.args.get('departure_station') }}">
+                    <input type="hidden" name="arrival_station" value="{{ request.args.get('arrival_station') }}">
+                    <input type="hidden" name="date" value="{{ request.args.get('date') }}">
+                    {% if previous_page %}
+                    <button type="button" class="button primary-button" data-page="{{ previous_page }}" onclick="goToPage(this.getAttribute('data-page'))">Previous</button>
+                    {% endif %}
+                    {% if next_page %}
+                    <button type="button" class="button primary-button" data-page="{{ next_page }}" onclick="goToPage(this.getAttribute('data-page'))">Next</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <div id="MyTickets" class="tab-content">
+            <h2>My Tickets</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Train Name</th>
+                        <th>Arrival Station</th>
+                        <th>Arrival Time</th>
+                        <th>Departure Station</th>
+                        <th>Departure Time</th>
+                        <th>Class</th>
+                        <th>Seat Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td>{{ ticket.booking_id }}</td>
+                        <td>{{ ticket.train_name }}</td>
+                        <td>{{ ticket.arrival_station }}</td>
+                        <td>{{ ticket.arrival_time }}</td>
+                        <td>{{ ticket.departure_station }}</td>
+                        <td>{{ ticket.departure_time }}</td>
+                        <td>{{ ticket.class }}</td>
+                        <td>{{ ticket.seat_number }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+<!-- Booking Modal -->
+<div id="bookingModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeBookingModal()">&times;</span>
+        <h2>Book Your Seat</h2>
+        <form method="POST" action="{{ url_for('book_ticket') }}">
+            <input type="hidden" name="schedule_id" id="schedule_id">
+
+            <label for="class">Select Class:</label>
+            <select name="class" id="class" required>
+                <option value="First Class">First Class</option>
+                <option value="Second Class">Second Class</option>
+                <option value="Third Class">Third Class</option>
+            </select>
+
+            <label for="seat_number">Seat Number:</label>
+            <input type="text" name="seat_number" id="seat_number" placeholder="Enter seat number" required>
+
+            <button type="submit" class="button primary-button">Confirm Booking</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
